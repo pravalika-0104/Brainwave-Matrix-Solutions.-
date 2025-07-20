@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Day Planner</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .dark-theme {
+      background-color: #1e1e1e;
+      color: #f4f4f4;
+    }
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      padding: 10px;
+    }
+    .time-block {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: white;
+    }
+    .dark-theme .time-block {
+      background-color: #333;
+      border-color: #555;
+    }
+    .time-label {
+      width: 80px;
+      font-weight: bold;
+    }
+    .task-input {
+      flex-grow: 1;
+      margin: 0 10px;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .save-btn {
+      padding: 6px 12px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .save-btn:hover {
+      background-color: #218838;
+    }
+    .complete-checkbox {
+      margin-right: 10px;
+    }
+    .theme-toggle {
+      margin-top: 10px;
+      cursor: pointer;
+      background-color: #343a40;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+    }
+    #current-date {
+      text-align: center;
+      font-size: 1.2em;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Day Planner</h1>
+    <div id="current-date"></div>
+    <button class="theme-toggle" onclick="toggleTheme()">Toggle Dark/Light Theme</button>
+  </header>
+
+  <div class="container" id="planner"></div>
+
+  <script>
+    const hours = [
+      "8 AM", "9 AM", "10 AM", "11 AM", "12 PM",
+      "1 PM", "2 PM", "3 PM", "4 PM", "5 PM",
+      "6 PM", "7 PM"
+    ];
+
+    const plannerEl = document.getElementById("planner");
+
+    function loadTasks() {
+      hours.forEach((hour, i) => {
+        const savedTask = localStorage.getItem(`task-${i}`) || "";
+        const isChecked = localStorage.getItem(`check-${i}`) === "true";
+
+        const block = document.createElement("div");
+        block.className = "time-block";
+
+        block.innerHTML = `
+          <div class="time-label">${hour}</div>
+          <input type="checkbox" class="complete-checkbox" id="check-${i}" ${isChecked ? "checked" : ""}>
+          <input type="text" class="task-input" id="task-${i}" value="${savedTask}"/>
+          <button class="save-btn" onclick="saveTask(${i})">Save</button>
+        `;
+
+        plannerEl.appendChild(block);
+      });
+    }
+
+    function saveTask(i) {
+      const task = document.getElementById(`task-${i}`).value;
+      const isChecked = document.getElementById(`check-${i}`).checked;
+      localStorage.setItem(`task-${i}`, task);
+      localStorage.setItem(`check-${i}`, isChecked);
+      alert("Task saved!");
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle("dark-theme");
+    }
+
+    function showDate() {
+      const date = new Date();
+      document.getElementById("current-date").innerText =
+        date.toDateString();
+    }
+
+    loadTasks();
+    showDate();
+  </script>
+</body>
+</html>
